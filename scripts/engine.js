@@ -116,13 +116,13 @@ const Engine = (() => {
     );
 
     const arrow = rowArrow();
-    if(!arrow) return;
+		if(!arrow) return;
 
-    const otherRowHasContent = (buttonRow === 'A') ? rowBHasContent : rowAHasContent;
-    arrow.style.display = otherRowHasContent ? 'flex' : 'none';
+	const otherRowHasContent = (buttonRow === 'A') ? rowBHasContent : rowAHasContent;
+	arrow.classList.toggle('has-content', otherRowHasContent);
 
-    arrow.textContent = (buttonRow === 'A') ? '⌄' : '⌃';
-    arrow.setAttribute('aria-label', buttonRow === 'A' ? 'Show more options' : 'Show first options');
+	arrow.textContent = (buttonRow === 'A') ? '⌄' : '⌃';
+	arrow.setAttribute('aria-label', buttonRow === 'A' ? 'Show more options' : 'Show first options');
   }
 
   function toggleButtonRow(){

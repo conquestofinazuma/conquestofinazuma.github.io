@@ -413,6 +413,10 @@ html, body{
     justify-self: center;
     align-self: center;
   }
+  
+  .row-arrow.has-content{
+    display: flex; /* only appears on mobile AND when row B has content */
+  }
 
   .hint-bar{ display: none; }
 

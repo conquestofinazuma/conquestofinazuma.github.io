@@ -34,7 +34,7 @@ Engine.register('intro', (() => {
         action: () => {
           if(isLastPage){
             currentPage = 0; // reset for next playthrough
-            ctx.show('starter_island'); // TODO: register this screen next
+            ctx.show('explore', { mapId: 'watatsumi', roomId: 'watatsumi_dock' });
           } else {
             currentPage++;
             renderPage(ctx);

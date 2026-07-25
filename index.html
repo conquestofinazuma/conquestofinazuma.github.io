@@ -64,13 +64,6 @@
         <div class="action-btn empty" data-slot="9"><span class="label"></span><span class="keycap">9</span></div>
         <div class="action-btn empty" data-slot="10"><span class="label"></span><span class="keycap">0</span></div>
       </div>
-	  
-	  <!-- Mobile-only arrow: lives inside the grid so it can sit beside slot 5.
-           On desktop, .button-deck is flex (not grid), so this just becomes
-           an extra flex item — but it's display:none by default until the
-           mobile media query flips it on, so desktop never sees it. -->
-      <div class="row-arrow" id="row-arrow"></div>
-    </div>
 
     <!-- Mobile-only arrow: swaps visible button-row between A (1-5) and B (6-10) -->
     <div class="row-arrow" id="row-arrow"></div>
@@ -83,10 +76,15 @@
 
 <!-- Core engine, loaded first -->
 <script src="scripts/engine.js"></script>
+<script src="scripts/registry.js"></script>
+
+<script src="maps/watatsumi.js"></script>
+<script src="rooms/watatsumiRooms.js"></script>
 
 <!-- Screen content modules. Each registers itself with the engine. -->
 <script src="screens/mainmenu/mainmenu.js"></script>
 <script src="screens/intro/intro.js"></script>
+<script src="screens/explore/explore.js"></script>
 
 <script>
   Engine.init();
