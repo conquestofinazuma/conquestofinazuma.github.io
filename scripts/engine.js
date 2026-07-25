@@ -95,8 +95,9 @@ const Engine = (() => {
 
   /* ---------- Mobile button-row visibility ---------- */
   // Slots 1-5 belong to row A, slots 6-10 belong to row B.
-  // This only visually matters on mobile (desktop shows all 10 via CSS);
-  // the arrow toggles which group of 5 is displayed/interactive on mobile.
+  // This only visually matters on mobile (desktop shows all 10 via CSS,
+  // since .mobile-hidden only has a display:none rule inside the
+  // @media (max-width:900px) block in style.css).
   function updateRowVisibility(){
     const slots = buttonSlots();
 
@@ -107,7 +108,6 @@ const Engine = (() => {
       btn.classList.toggle('mobile-hidden', !shouldShowOnMobile);
     });
 
-    // does row B have any active button? (only relevant while sitting on row A)
     const rowBHasContent = Array.from(slots).some(btn =>
       parseInt(btn.dataset.slot, 10) > 5 && btn.classList.contains('active')
     );
@@ -118,11 +118,9 @@ const Engine = (() => {
     const arrow = rowArrow();
     if(!arrow) return;
 
-    // Arrow only shows if there's a reason to flip — i.e. the *other* row has content.
     const otherRowHasContent = (buttonRow === 'A') ? rowBHasContent : rowAHasContent;
     arrow.style.display = otherRowHasContent ? 'flex' : 'none';
 
-    // Point the arrow in a direction that makes sense for the current row.
     arrow.textContent = (buttonRow === 'A') ? '⌄' : '⌃';
     arrow.setAttribute('aria-label', buttonRow === 'A' ? 'Show more options' : 'Show first options');
   }

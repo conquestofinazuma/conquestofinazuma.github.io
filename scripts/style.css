@@ -104,7 +104,7 @@ html, body{
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  min-height:0; /* allows children to scroll internally */
+  min-height:0;
 }
 
 .layout{
@@ -205,7 +205,6 @@ html, body{
 .parchment-text p{ margin-bottom: 1.1em; }
 .parchment-text p:last-child{ margin-bottom: 0; }
 
-/* simple scrollbar styling — placeholder for a themed "rope" scrollbar later */
 .parchment-text::-webkit-scrollbar{ width: 8px; }
 .parchment-text::-webkit-scrollbar-track{ background: transparent; }
 .parchment-text::-webkit-scrollbar-thumb{
@@ -311,14 +310,37 @@ html, body{
   z-index:2;
 }
 
+/* ============ MOBILE ROW-SWAP ARROW ============ */
+/* Base state: hidden on desktop. JS toggles display:flex on mobile when needed. */
+.row-arrow{
+  display: none;
+  width: 42px;
+  height: 42px;
+  margin: 8px auto 0;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: var(--gold-bright);
+  border: 1px solid rgba(201,162,75,0.4);
+  border-radius: 50%;
+  background: linear-gradient(180deg, #241914, #150e0b 60%, #0e0906);
+  cursor: pointer;
+  box-shadow: 0 0 0 rgba(201,162,75,0);
+  animation: arrowPulse 2.2s ease-in-out infinite;
+}
+@keyframes arrowPulse{
+  0%, 100%{ box-shadow: 0 0 0 rgba(201,162,75,0), 0 2px 6px rgba(0,0,0,0.4); }
+  50%{ box-shadow: 0 0 14px rgba(201,162,75,0.55), 0 2px 6px rgba(0,0,0,0.4); }
+}
+
 /* ============================================================
    RESPONSIVE / MOBILE LAYOUT (portrait-first)
+   This ENTIRE block applies to all phone widths (<= 900px).
 ============================================================ */
 
 @media (max-width: 900px){
 
   .game-root{
-    /* let the stage use nearly the whole screen on phones */
     padding: 12px 0;
   }
 
@@ -342,7 +364,7 @@ html, body{
   .parchment-panel{ padding: 18px 18px; }
   .parchment-text{ font-size: 0.92rem; line-height: 1.55; padding-right: 8px; }
 
-  /* ---------- Button deck: switch to 2 columns x 5 rows ---------- */
+  /* ---------- Button deck: 2 columns x 5 rows ---------- */
   .button-deck{
     margin-top: 12px;
     display: grid;
@@ -351,12 +373,11 @@ html, body{
     gap: 8px;
   }
 
-  /* rows are no longer flex containers on mobile — grid handles placement */
   .button-row{
     display: contents;
   }
 
-  .action-btn{ height: auto; } /* grid-auto-rows controls height instead */
+  .action-btn{ height: auto; }
 
   .action-btn .label{
     font-size: 0.82rem;
@@ -364,49 +385,24 @@ html, body{
     padding: 0 6px;
   }
 
-  /* keybind numbers are meaningless on touch — hide them */
   .action-btn .keycap{ display: none; }
 
-  /* the "use keyboard" hint doesn't apply on touch devices */
+  /* Buttons belonging to the row NOT currently displayed are fully removed
+     from layout. THIS is the rule that makes the A/B row-swap actually work —
+     it must live in this <=900px block so it applies on real phone widths. */
+  .action-btn.mobile-hidden{
+    display: none;
+  }
+
   .hint-bar{ display: none; }
 
   .version-tag{ font-size: 0.55rem; top: 6px; right: 8px; }
 }
 
 /* ---------- Slightly larger phones / small tablets in portrait ---------- */
+/* Only minor size tweaks here — no structural rules belong in this block. */
 @media (min-width: 601px) and (max-width: 900px){
   .button-deck{ grid-auto-rows: 60px; }
   .action-btn .label{ font-size: 0.95rem; }
   .parchment-text{ font-size: 1rem; }
-  
-  /* only relevant on mobile: the arrow can actually appear here */
-  .row-arrow{ display: none; } /* JS toggles this to 'flex' when the other row has content */
-
-  /* buttons belonging to the row not currently displayed are fully removed from layout */
-  .action-btn.mobile-hidden{
-    display: none;
-  }
-}
-
-/* ============ MOBILE ROW-SWAP ARROW ============ */
-/* Hidden entirely on desktop; only relevant in the mobile media query below */
-.row-arrow{
-  display: none;
-  width: 42px;
-  height: 42px;
-  margin: 8px auto 0;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.4rem;
-  color: var(--gold-bright);
-  border: 1px solid rgba(201,162,75,0.4);
-  border-radius: 50%;
-  background: linear-gradient(180deg, #241914, #150e0b 60%, #0e0906);
-  cursor: pointer;
-  box-shadow: 0 0 0 rgba(201,162,75,0);
-  animation: arrowPulse 2.2s ease-in-out infinite;
-}
-@keyframes arrowPulse{
-  0%, 100%{ box-shadow: 0 0 0 rgba(201,162,75,0), 0 2px 6px rgba(0,0,0,0.4); }
-  50%{ box-shadow: 0 0 14px rgba(201,162,75,0.55), 0 2px 6px rgba(0,0,0,0.4); }
 }
