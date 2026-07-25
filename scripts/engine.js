@@ -1,32 +1,26 @@
 /* ============================================================
    Conquest of Inazuma — Core Engine
-   Handles: screen switching, the persistent button deck,
-   keyboard input, and background crossfade rotation.
-   Screen content files (screens/-/-.js) register themselves
-   into Engine.screens and never touch layout DOM directly.
 ============================================================ */
 
 const Engine = (() => {
 
-  const screens = {}; // registry: id -> screen definition object
+  const screens = {};
   let currentScreenId = null;
+
+  // Mobile button-row state: 'A' = slots 1-5, 'B' = slots 6-10.
+  // Always resets to 'A' whenever setButtons() is called.
+  let buttonRow = 'A';
 
   const layoutMainmenu = () => document.getElementById('layout-mainmenu');
   const layoutGeneric   = () => document.getElementById('layout-generic');
   const parchmentText   = () => document.getElementById('parchment-text');
   const buttonSlots     = () => document.querySelectorAll('.action-btn');
+  const rowArrow        = () => document.getElementById('row-arrow');
 
-  /* ---------- Screen registration ---------- */
-  // Screen definition shape:
-  // {
-  //   layout: 'mainmenu' | 'generic',
-  //   onEnter(ctx): called every time this screen is shown
-  // }
   function register(id, definition){
     screens[id] = definition;
   }
 
-  /* ---------- Screen switching ---------- */
   function show(id, params){
     const def = screens[id];
     if(!def){
@@ -36,27 +30,18 @@ const Engine = (() => {
 
     currentScreenId = id;
 
-    // toggle which layout div is visible
     layoutMainmenu().style.display = (def.layout === 'mainmenu') ? 'flex' : 'none';
     layoutGeneric().style.display  = (def.layout === 'generic')  ? 'flex' : 'none';
 
-    // clear button deck before the screen defines its own buttons
     clearButtons();
 
-    // context object passed into screen callbacks, so screens can
-    // call back into the engine without depending on globals directly
-    const ctx = {
-      show,
-      setButtons,
-      setText
-    };
+    const ctx = { show, setButtons, setText };
 
     if(typeof def.onEnter === 'function'){
       def.onEnter(ctx, params);
     }
   }
 
-  /* ---------- Generic layout helpers ---------- */
   function setText(paragraphs){
     const container = parchmentText();
     container.innerHTML = '';
@@ -65,11 +50,10 @@ const Engine = (() => {
       el.textContent = p;
       container.appendChild(el);
     });
-    container.scrollTop = 0; // reset scroll position on new page
+    container.scrollTop = 0;
   }
 
   /* ---------- Button deck ---------- */
-  // buttonDefs: array of { slot: 1-10, label: string, action: fn }
   function setButtons(buttonDefs){
     clearButtons();
     buttonDefs.forEach(def => {
@@ -78,9 +62,12 @@ const Engine = (() => {
       slotEl.classList.remove('empty');
       slotEl.classList.add('active');
       slotEl.querySelector('.label').textContent = def.label;
-      slotEl.dataset.hasAction = 'true';
-      slotEl._action = def.action; // stash directly on the element
+      slotEl._action = def.action;
     });
+
+    // any fresh call to setButtons resets the visible group back to A
+    buttonRow = 'A';
+    updateRowVisibility();
   }
 
   function clearButtons(){
@@ -88,9 +75,10 @@ const Engine = (() => {
       btn.classList.remove('active');
       btn.classList.add('empty');
       btn.querySelector('.label').textContent = '';
-      delete btn.dataset.hasAction;
       btn._action = null;
     });
+    buttonRow = 'A';
+    updateRowVisibility();
   }
 
   function runButton(btn){
@@ -105,12 +93,51 @@ const Engine = (() => {
     setTimeout(() => btn.style.transform = '', 120);
   }
 
+  /* ---------- Mobile button-row visibility ---------- */
+  // Slots 1-5 belong to row A, slots 6-10 belong to row B.
+  // This only visually matters on mobile (desktop shows all 10 via CSS);
+  // the arrow toggles which group of 5 is displayed/interactive on mobile.
+  function updateRowVisibility(){
+    const slots = buttonSlots();
+
+    slots.forEach(btn => {
+      const slotNum = parseInt(btn.dataset.slot, 10);
+      const belongsToA = slotNum <= 5;
+      const shouldShowOnMobile = (buttonRow === 'A') ? belongsToA : !belongsToA;
+      btn.classList.toggle('mobile-hidden', !shouldShowOnMobile);
+    });
+
+    // does row B have any active button? (only relevant while sitting on row A)
+    const rowBHasContent = Array.from(slots).some(btn =>
+      parseInt(btn.dataset.slot, 10) > 5 && btn.classList.contains('active')
+    );
+    const rowAHasContent = Array.from(slots).some(btn =>
+      parseInt(btn.dataset.slot, 10) <= 5 && btn.classList.contains('active')
+    );
+
+    const arrow = rowArrow();
+    if(!arrow) return;
+
+    // Arrow only shows if there's a reason to flip — i.e. the *other* row has content.
+    const otherRowHasContent = (buttonRow === 'A') ? rowBHasContent : rowAHasContent;
+    arrow.style.display = otherRowHasContent ? 'flex' : 'none';
+
+    // Point the arrow in a direction that makes sense for the current row.
+    arrow.textContent = (buttonRow === 'A') ? '⌄' : '⌃';
+    arrow.setAttribute('aria-label', buttonRow === 'A' ? 'Show more options' : 'Show first options');
+  }
+
+  function toggleButtonRow(){
+    buttonRow = (buttonRow === 'A') ? 'B' : 'A';
+    updateRowVisibility();
+  }
+
   /* ---------- Input ---------- */
   function bindInput(){
     buttonSlots().forEach(btn => btn.addEventListener('click', () => runButton(btn)));
 
     const keyOrder = ['1','2','3','4','5','6','7','8','9','0'];
-    const slots = document.querySelectorAll('.action-btn'); // in DOM order, slot 1-10
+    const slots = document.querySelectorAll('.action-btn');
 
     document.addEventListener('keydown', (e) => {
       const idx = keyOrder.indexOf(e.key);
@@ -118,6 +145,11 @@ const Engine = (() => {
       const slot = slots[idx];
       if(slot) runButton(slot);
     });
+
+    const arrow = rowArrow();
+    if(arrow){
+      arrow.addEventListener('click', toggleButtonRow);
+    }
   }
 
   /* ---------- Background rotation ---------- */
@@ -158,7 +190,6 @@ const Engine = (() => {
     scheduleFlash();
   }
 
-  /* ---------- Boot ---------- */
   function init(){
     bindInput();
     bindAmbientFlash();
@@ -166,6 +197,7 @@ const Engine = (() => {
       ['assets/title/background.webp','assets/title/background2.webp','assets/title/background3.webp','assets/title/background4.webp'],
       10000
     );
+    updateRowVisibility();
     show('mainmenu');
   }
 

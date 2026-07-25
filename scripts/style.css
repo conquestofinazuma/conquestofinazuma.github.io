@@ -378,4 +378,35 @@ html, body{
   .button-deck{ grid-auto-rows: 60px; }
   .action-btn .label{ font-size: 0.95rem; }
   .parchment-text{ font-size: 1rem; }
+  
+  /* only relevant on mobile: the arrow can actually appear here */
+  .row-arrow{ display: none; } /* JS toggles this to 'flex' when the other row has content */
+
+  /* buttons belonging to the row not currently displayed are fully removed from layout */
+  .action-btn.mobile-hidden{
+    display: none;
+  }
+}
+
+/* ============ MOBILE ROW-SWAP ARROW ============ */
+/* Hidden entirely on desktop; only relevant in the mobile media query below */
+.row-arrow{
+  display: none;
+  width: 42px;
+  height: 42px;
+  margin: 8px auto 0;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: var(--gold-bright);
+  border: 1px solid rgba(201,162,75,0.4);
+  border-radius: 50%;
+  background: linear-gradient(180deg, #241914, #150e0b 60%, #0e0906);
+  cursor: pointer;
+  box-shadow: 0 0 0 rgba(201,162,75,0);
+  animation: arrowPulse 2.2s ease-in-out infinite;
+}
+@keyframes arrowPulse{
+  0%, 100%{ box-shadow: 0 0 0 rgba(201,162,75,0), 0 2px 6px rgba(0,0,0,0.4); }
+  50%{ box-shadow: 0 0 14px rgba(201,162,75,0.55), 0 2px 6px rgba(0,0,0,0.4); }
 }
