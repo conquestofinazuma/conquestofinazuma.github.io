@@ -7,15 +7,14 @@ const Engine = (() => {
   const screens = {};
   let currentScreenId = null;
 
-  // Mobile button-row state: 'A' = slots 1-5, 'B' = slots 6-10.
-  // Always resets to 'A' whenever setButtons() is called.
   let buttonRow = 'A';
 
   const layoutMainmenu = () => document.getElementById('layout-mainmenu');
-  const layoutGeneric   = () => document.getElementById('layout-generic');
-  const parchmentText   = () => document.getElementById('parchment-text');
-  const buttonSlots     = () => document.querySelectorAll('.action-btn');
-  const rowArrow        = () => document.getElementById('row-arrow');
+  const layoutContent  = () => document.getElementById('layout-content'); // renamed from layoutGeneric
+  const parchmentText  = () => document.getElementById('parchment-text');
+  const buttonSlots    = () => document.querySelectorAll('.action-btn');
+  const rowArrow       = () => document.getElementById('row-arrow');
+  const gameframe      = () => document.getElementById('gameframe');
 
   function register(id, definition){
     screens[id] = definition;
@@ -31,7 +30,13 @@ const Engine = (() => {
     currentScreenId = id;
 
     layoutMainmenu().style.display = (def.layout === 'mainmenu') ? 'flex' : 'none';
-    layoutGeneric().style.display  = (def.layout === 'generic')  ? 'flex' : 'none';
+    layoutContent().style.display  = (def.layout === 'generic')  ? 'flex' : 'none';
+
+    // Party/minimap/compass frame: shown unless a screen explicitly opts out
+    // (main menu, intro). Default to true so future screens don't need to
+    // remember to turn it on.
+    const showFrame = def.showFrame !== false;
+    gameframe().classList.toggle('frame-hidden', !showFrame);
 
     clearButtons();
 
@@ -65,7 +70,6 @@ const Engine = (() => {
       slotEl._action = def.action;
     });
 
-    // any fresh call to setButtons resets the visible group back to A
     buttonRow = 'A';
     updateRowVisibility();
   }
@@ -94,10 +98,6 @@ const Engine = (() => {
   }
 
   /* ---------- Mobile button-row visibility ---------- */
-  // Slots 1-5 belong to row A, slots 6-10 belong to row B.
-  // This only visually matters on mobile (desktop shows all 10 via CSS,
-  // since .mobile-hidden only has a display:none rule inside the
-  // @media (max-width:900px) block in style.css).
   function updateRowVisibility(){
     const slots = buttonSlots();
 
@@ -116,13 +116,13 @@ const Engine = (() => {
     );
 
     const arrow = rowArrow();
-		if(!arrow) return;
+    if(!arrow) return;
 
-	const otherRowHasContent = (buttonRow === 'A') ? rowBHasContent : rowAHasContent;
-	arrow.classList.toggle('has-content', otherRowHasContent);
+    const otherRowHasContent = (buttonRow === 'A') ? rowBHasContent : rowAHasContent;
+    arrow.classList.toggle('has-content', otherRowHasContent);
 
-	arrow.textContent = (buttonRow === 'A') ? '⌄' : '⌃';
-	arrow.setAttribute('aria-label', buttonRow === 'A' ? 'Show more options' : 'Show first options');
+    arrow.textContent = (buttonRow === 'A') ? '⌄' : '⌃';
+    arrow.setAttribute('aria-label', buttonRow === 'A' ? 'Show more options' : 'Show first options');
   }
 
   function toggleButtonRow(){

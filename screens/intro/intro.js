@@ -46,6 +46,7 @@ Engine.register('intro', (() => {
 
   return {
     layout: 'generic',
+	showFrame: false,
     onEnter(ctx){
       currentPage = 0;
       renderPage(ctx);
