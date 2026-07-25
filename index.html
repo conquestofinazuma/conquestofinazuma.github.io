@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Conquest of Inazuma</title>
 <link rel="icon" type="image/png" href="assets/title/logo.png">
 <link rel="stylesheet" href="scripts/style.css">
@@ -64,6 +64,12 @@
         <div class="action-btn empty" data-slot="9"><span class="label"></span><span class="keycap">9</span></div>
         <div class="action-btn empty" data-slot="10"><span class="label"></span><span class="keycap">0</span></div>
       </div>
+	  
+	  <!-- Mobile-only arrow: lives inside the grid so it can sit beside slot 5.
+           On desktop, .button-deck is flex (not grid), so this just becomes
+           an extra flex item — but it's display:none by default until the
+           mobile media query flips it on, so desktop never sees it. -->
+      <div class="row-arrow" id="row-arrow"></div>
     </div>
 
     <!-- Mobile-only arrow: swaps visible button-row between A (1-5) and B (6-10) -->

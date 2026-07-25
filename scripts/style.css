@@ -311,12 +311,12 @@ html, body{
 }
 
 /* ============ MOBILE ROW-SWAP ARROW ============ */
-/* Base state: hidden on desktop. JS toggles display:flex on mobile when needed. */
+/* Base state: hidden on desktop, and not part of any grid there
+   since .button-deck is flex on desktop (the arrow just sits inert). */
 .row-arrow{
   display: none;
   width: 42px;
   height: 42px;
-  margin: 8px auto 0;
   align-items: center;
   justify-content: center;
   font-size: 1.4rem;
@@ -335,13 +335,14 @@ html, body{
 
 /* ============================================================
    RESPONSIVE / MOBILE LAYOUT (portrait-first)
-   This ENTIRE block applies to all phone widths (<= 900px).
 ============================================================ */
 
 @media (max-width: 900px){
 
   .game-root{
     padding: 12px 0;
+    /* pushes everything up away from the iOS Safari bottom URL bar */
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 34px);
   }
 
   .stage{
@@ -364,13 +365,14 @@ html, body{
   .parchment-panel{ padding: 18px 18px; }
   .parchment-text{ font-size: 0.92rem; line-height: 1.55; padding-right: 8px; }
 
-  /* ---------- Button deck: 2 columns x 5 rows ---------- */
+  /* ---------- Button deck: 2 columns, auto rows ---------- */
   .button-deck{
     margin-top: 12px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-auto-rows: 52px;
     gap: 8px;
+    align-items: stretch;
   }
 
   .button-row{
@@ -388,10 +390,28 @@ html, body{
   .action-btn .keycap{ display: none; }
 
   /* Buttons belonging to the row NOT currently displayed are fully removed
-     from layout. THIS is the rule that makes the A/B row-swap actually work —
-     it must live in this <=900px block so it applies on real phone widths. */
+     from the grid — this is what lets slot 5 + the arrow shift up to
+     naturally occupy the last visible row together. */
   .action-btn.mobile-hidden{
     display: none;
+  }
+
+  /* Slot 5 gets a little extra visual flourish since it's often the lone
+     "last" button in row A, sitting centered beside the arrow. */
+  .action-btn[data-slot="5"]{
+    justify-self: stretch;
+  }
+  .action-btn[data-slot="5"] .label{
+    text-align: center;
+  }
+
+  /* The arrow becomes a real grid item on mobile, auto-placed into
+     whatever cell comes next after the last visible button — which,
+     with slots 6-10 hidden, lands it right beside slot 5. */
+  .row-arrow{
+    display: none; /* JS flips this to 'flex' only when row B has content */
+    justify-self: center;
+    align-self: center;
   }
 
   .hint-bar{ display: none; }
@@ -400,7 +420,6 @@ html, body{
 }
 
 /* ---------- Slightly larger phones / small tablets in portrait ---------- */
-/* Only minor size tweaks here — no structural rules belong in this block. */
 @media (min-width: 601px) and (max-width: 900px){
   .button-deck{ grid-auto-rows: 60px; }
   .action-btn .label{ font-size: 0.95rem; }

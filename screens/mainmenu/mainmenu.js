@@ -8,6 +8,11 @@ Engine.register('mainmenu', {
           console.log('[Conquest of Inazuma] Load Game triggered');
           // TODO: open load-game panel / file picker
         }
+      },
+      // TEMP TEST BUTTON — remove once the mobile row-swap arrow is confirmed working
+      { slot: 8, label: '(test row B)', action: () => {
+          console.log('[Conquest of Inazuma] Test button pressed');
+        }
       }
     ]);
   }
