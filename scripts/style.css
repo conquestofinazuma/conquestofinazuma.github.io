@@ -85,16 +85,311 @@ html, body{
   100%{opacity:0;}
 }
 
+/* ============ GAMEFRAME (persistent 3-column game chrome) ============ */
+.gameframe{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: center;
+  gap: 18px;
+  position: relative;
+  z-index: 2;
+  padding: 18px 24px;
+}
+
+/* When the gameframe should be hidden entirely (main menu, intro),
+   Engine toggles this class on #gameframe; .stage re-centers alone. */
+.gameframe.frame-hidden .side-panel{
+  display: none;
+}
+.gameframe.frame-hidden{
+  justify-content: center;
+}
+
+.side-panel{
+  width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #241914, #150e0b 60%, #0e0906);
+  border: 1px solid rgba(201,162,75,0.28);
+  border-radius: 4px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(0,0,0,0.4);
+  overflow: hidden;
+}
+
+.panel-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(201,162,75,0.25);
+}
+.panel-title{
+  font-family:'Cinzel', serif;
+  font-size: 1.1rem;
+  color: var(--gold-bright);
+  letter-spacing: 0.05em;
+}
+.panel-header-glyphs{
+  font-size: 0.85rem;
+  color: rgba(201,162,75,0.5);
+  letter-spacing: 0.2em;
+}
+
+/* ---------- Left panel: party/enemy unit cards ---------- */
+.panel-body{
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.unit-card{
+  background: linear-gradient(160deg, var(--parchment) 0%, var(--parchment-2) 100%);
+  border: 1px solid rgba(90,70,40,0.5);
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  overflow: hidden;
+}
+.unit-card-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: linear-gradient(180deg, rgba(201,162,75,0.35), rgba(201,162,75,0.15));
+}
+.unit-name{
+  font-family:'Cinzel', serif;
+  font-weight: 600;
+  color: #241a10;
+}
+.unit-vision-icon{
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f2e37a, #c9a24b);
+  border: 1px solid rgba(0,0,0,0.3);
+}
+.unit-card-body{
+  display: flex;
+  gap: 10px;
+  padding: 8px 10px;
+}
+.unit-portrait{
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.2);
+  border: 2px solid var(--gold);
+  flex-shrink: 0;
+}
+.unit-item-slots{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  flex: 1;
+}
+.item-slot{
+  aspect-ratio: 1;
+  background: rgba(0,0,0,0.1);
+  border: 1px dashed rgba(90,70,40,0.4);
+  border-radius: 3px;
+}
+.unit-card-footer{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 10px 8px;
+}
+.unit-hp{
+  color: #7a1414;
+  font-weight: 700;
+  background: rgba(0,0,0,0.08);
+  padding: 1px 8px;
+  border-radius: 3px;
+}
+.unit-more{ color: rgba(36,26,16,0.5); letter-spacing: 0.2em; }
+
+.panel-footer-stats{
+  padding: 12px 16px;
+  border-top: 1px solid rgba(201,162,75,0.2);
+}
+.resource-track{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family:'Cinzel', serif;
+  color: var(--gold-bright);
+}
+.resource-label-sub{
+  font-size: 0.75rem;
+  color: rgba(201,162,75,0.5);
+  margin-bottom: 8px;
+}
+
+/* ---------- Right panel: minimap / day-hour / compass / footer icons ---------- */
+.minimap-box{
+  position: relative;
+  margin: 14px;
+  aspect-ratio: 1;
+  background: linear-gradient(160deg, var(--parchment) 0%, var(--parchment-2) 100%);
+  border: 1px solid rgba(90,70,40,0.5);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.minimap-placeholder{
+  color: rgba(36,26,16,0.4);
+  font-style: italic;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 20px;
+}
+.minimap-zoom-controls{
+  position: absolute;
+  top: 8px; right: 8px;
+  display: flex;
+  gap: 6px;
+}
+.zoom-btn{
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.15);
+  border: 1px solid rgba(90,70,40,0.4);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-weight: 700;
+  color: #241a10;
+}
+.minimap-corner-controls{
+  position: absolute;
+  bottom: 8px; right: 8px;
+  display: flex;
+  gap: 6px;
+}
+.minimap-icon-btn{
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.15);
+  border: 1px solid rgba(90,70,40,0.4);
+}
+
+.daytime-bar{
+  margin: 0 14px 14px;
+  display: flex;
+  gap: 8px;
+}
+.day-counter{
+  flex-shrink: 0;
+  background: rgba(139,107,214,0.15);
+  border: 1px solid rgba(139,107,214,0.4);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+}
+.day-badge{
+  font-family:'Cinzel', serif;
+  color: var(--violet-bright);
+  font-weight: 700;
+}
+.hour-indicator{
+  flex: 1;
+  background: rgba(139,107,214,0.1);
+  border: 1px solid rgba(139,107,214,0.3);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: rgba(183,157,255,0.6);
+  font-style: italic;
+  padding: 6px;
+  text-align: center;
+}
+
+.compass-box{
+  margin: 0 14px 14px;
+  min-height: 120px;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(201,162,75,0.25);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.compass-placeholder{
+  color: rgba(233,200,119,0.4);
+  font-size: 0.85rem;
+  text-align: center;
+  font-style: italic;
+}
+
+.row-arrow-echo{
+  margin: 0 14px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--gold-bright);
+  font-size: 1.3rem;
+}
+.row-arrow-echo .arrow-divider{
+  flex: 1;
+  height: 1px;
+  margin: 0 10px;
+  background: linear-gradient(90deg, transparent, rgba(201,162,75,0.5), transparent);
+}
+
+.hud-footer-icons{
+  margin-top: auto;
+  display: flex;
+  justify-content: space-around;
+  padding: 14px;
+  border-top: 1px solid rgba(201,162,75,0.2);
+}
+.footer-icon-btn{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  color: rgba(201,162,75,0.6);
+}
+.footer-icon-glyph{ font-size: 1.4rem; }
+.footer-icon-label{
+  font-family:'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+}
+.footer-icon-badge{
+  position: absolute;
+  top: -6px; right: -6px;
+  background: #a41818;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+
 /* ============ STAGE (holds content area + button deck) ============ */
 .stage{
-  width:min(62vw, 980px);
-  height:min(80vh, 860px);
+  flex: 1 1 auto;
+  max-width: 980px;
+  height: 100%;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
   position:relative;
-  z-index:2;
 }
 
 .screen-content{
@@ -173,7 +468,7 @@ html, body{
   text-align:center;
 }
 
-/* ============ GENERIC PARCHMENT LAYOUT ============ */
+/* ============ CONTENT LAYOUT (renamed from GENERIC) ============ */
 .parchment-panel{
   width:100%;
   height:100%;
@@ -311,8 +606,6 @@ html, body{
 }
 
 /* ============ MOBILE ROW-SWAP ARROW ============ */
-/* Base state: hidden on desktop, and not part of any grid there
-   since .button-deck is flex on desktop (the arrow just sits inert). */
 .row-arrow{
   display: none;
   width: 42px;
@@ -341,8 +634,15 @@ html, body{
 
   .game-root{
     padding: 12px 0;
-    /* pushes everything up away from the iOS Safari bottom URL bar */
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 34px);
+  }
+
+  /* NOTE: side panels have no dedicated mobile treatment yet — this is a
+     known gap flagged for a follow-up pass. For now they'll just squeeze
+     the flex row uncomfortably on narrow screens. */
+  .gameframe{
+    padding: 8px;
+    gap: 8px;
   }
 
   .stage{
@@ -389,15 +689,10 @@ html, body{
 
   .action-btn .keycap{ display: none; }
 
-  /* Buttons belonging to the row NOT currently displayed are fully removed
-     from the grid — this is what lets slot 5 + the arrow shift up to
-     naturally occupy the last visible row together. */
   .action-btn.mobile-hidden{
     display: none;
   }
 
-  /* Slot 5 gets a little extra visual flourish since it's often the lone
-     "last" button in row A, sitting centered beside the arrow. */
   .action-btn[data-slot="5"]{
     justify-self: stretch;
   }
@@ -405,17 +700,14 @@ html, body{
     text-align: center;
   }
 
-  /* The arrow becomes a real grid item on mobile, auto-placed into
-     whatever cell comes next after the last visible button — which,
-     with slots 6-10 hidden, lands it right beside slot 5. */
   .row-arrow{
-    display: none; /* JS flips this to 'flex' only when row B has content */
+    display: none;
     justify-self: center;
     align-self: center;
   }
-  
+
   .row-arrow.has-content{
-    display: flex; /* only appears on mobile AND when row B has content */
+    display: flex;
   }
 
   .hint-bar{ display: none; }
