@@ -310,3 +310,84 @@ html, body{
   color: rgba(201,162,75,0.3);
   z-index:2;
 }
+
+/* ============================================================
+   RESPONSIVE / MOBILE LAYOUT
+============================================================ */
+
+/* Rotate-device prompt — hidden by default, shown only when
+   the media query below matches (narrow AND portrait) */
+.rotate-prompt{
+  display:none;
+  position:fixed; inset:0;
+  z-index:999;
+  background: var(--ink);
+  color: var(--parchment);
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-family:'EB Garamond', serif;
+  font-size: 1.1rem;
+  line-height:1.6;
+  padding: 40px;
+}
+.rotate-icon{
+  font-size: 3rem;
+  color: var(--gold-bright);
+  margin-bottom: 20px;
+  animation: rotateHint 2s ease-in-out infinite;
+}
+@keyframes rotateHint{
+  0%, 100%{ transform: rotate(0deg); }
+  50%{ transform: rotate(-90deg); }
+}
+
+/* When narrow AND portrait: block the game, show rotate prompt */
+@media (max-width: 900px) and (orientation: portrait){
+  .rotate-prompt{ display:flex; }
+  .game-root{ display:none; }
+}
+
+/* ---------- Phone landscape (small width, wide orientation) ---------- */
+@media (max-width: 900px) and (orientation: landscape){
+
+  .stage{
+    width: 96vw;
+    height: 92vh;
+  }
+
+  /* shrink main menu title block */
+  .crest{ width: 110px; height: 110px; margin-bottom: 8px; }
+  .kanji-mark{ font-size: 1.1rem; letter-spacing: 0.35em; margin-bottom: 8px; }
+  .title-en .line1{ font-size: 1.5rem; }
+  .title-en .line2{ font-size: 2.2rem; }
+  .title-en .line3{ font-size: 1.7rem; }
+  .subtitle{ font-size: 0.8rem; }
+  .divider{ margin: 12px 0 10px; }
+
+  /* parchment panel: less padding, smaller text so more fits */
+  .parchment-panel{ padding: 20px 24px; }
+  .parchment-text{ font-size: 0.95rem; line-height: 1.5; padding-right: 10px; }
+
+  /* button deck: shrink height, tighten gaps so 5-across still fits */
+  .button-deck{ margin-top: 10px; gap: 6px; }
+  .button-row{ gap: 6px; }
+  .action-btn{ height: 46px; }
+  .action-btn .label{ font-size: 0.8rem; letter-spacing: 0.04em; }
+  .action-btn .keycap{
+    /* keybind numbers are meaningless on touch — hide them on mobile */
+    display: none;
+  }
+
+  .hint-bar{
+    /* the "use keyboard" hint doesn't apply on touch devices */
+    display: none;
+  }
+  .version-tag{ font-size: 0.55rem; top: 8px; right: 8px; }
+}
+
+/* ---------- Tablet-ish sizes (iPad, larger phones in landscape) ---------- */
+@media (min-width: 901px) and (max-width: 1300px){
+  .stage{ width: 82vw; }
+}
