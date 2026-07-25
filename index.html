@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Conquest of Inazuma</title>
+<link rel="icon" type="image/png" href="assets/title/logo.png">
+<link rel="stylesheet" href="scripts/style.css">
+</head>
+<body>
+
+<div class="game-root" id="root">
+  <div class="bg-layer" id="bgLayerA"></div>
+  <div class="bg-layer" id="bgLayerB"></div>
+  <div class="bg-scrim"></div>
+  <div class="storm-veil"></div>
+  <div class="flash" id="flash"></div>
+  <div class="vignette"></div>
+
+  <div class="stage">
+
+    <!-- Swappable content area. Only one child visible at a time. -->
+    <div id="screen-content" class="screen-content">
+
+      <!-- MAIN MENU LAYOUT -->
+      <div class="layout" id="layout-mainmenu">
+        <div class="crest">
+          <img src="assets/title/logo.png" alt="Conquest of Inazuma crest">
+        </div>
+        <div class="content-block">
+          <div class="kanji-mark">雷 影 抗 争</div>
+          <div class="title-en">
+            <div class="line1">CONQUEST</div>
+            <div class="line2">OF</div>
+            <div class="line3">INAZUMA</div>
+          </div>
+          <div class="divider"></div>
+          <div class="subtitle">· chronicles of the vision hunt decree ·</div>
+        </div>
+      </div>
+
+      <!-- GENERIC PARCHMENT LAYOUT (reused for intro, dialogue, lore, shops, etc.) -->
+      <div class="layout" id="layout-generic" style="display:none;">
+        <div class="parchment-panel">
+          <div class="parchment-text" id="parchment-text"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PERSISTENT BUTTON DECK: exists once, relabeled per screen -->
+    <div class="button-deck" id="button-deck">
+      <div class="button-row">
+        <div class="action-btn empty" data-slot="1"><span class="label"></span><span class="keycap">1</span></div>
+        <div class="action-btn empty" data-slot="2"><span class="label"></span><span class="keycap">2</span></div>
+        <div class="action-btn empty" data-slot="3"><span class="label"></span><span class="keycap">3</span></div>
+        <div class="action-btn empty" data-slot="4"><span class="label"></span><span class="keycap">4</span></div>
+        <div class="action-btn empty" data-slot="5"><span class="label"></span><span class="keycap">5</span></div>
+      </div>
+      <div class="button-row">
+        <div class="action-btn empty" data-slot="6"><span class="label"></span><span class="keycap">6</span></div>
+        <div class="action-btn empty" data-slot="7"><span class="label"></span><span class="keycap">7</span></div>
+        <div class="action-btn empty" data-slot="8"><span class="label"></span><span class="keycap">8</span></div>
+        <div class="action-btn empty" data-slot="9"><span class="label"></span><span class="keycap">9</span></div>
+        <div class="action-btn empty" data-slot="10"><span class="label"></span><span class="keycap">0</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="hint-bar" id="hint-bar">use ↑ mouse or number keys 1–0 to navigate</div>
+  <div class="version-tag">v0.0.1 — prologue build</div>
+</div>
+
+<!-- Core engine, loaded first -->
+<script src="scripts/engine.js"></script>
+
+<!-- Screen content modules. Each registers itself with the engine. -->
+<script src="screens/mainmenu/mainmenu.js"></script>
+<script src="screens/intro/intro.js"></script>
+
+<script>
+  Engine.init();
+</script>
+
+</body>
+</html>
