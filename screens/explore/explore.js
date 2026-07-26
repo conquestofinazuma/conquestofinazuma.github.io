@@ -46,6 +46,7 @@ Engine.register('explore', (() => {
     });
 
     Compass.render(compassDirs);
+	Minimap.render(mapId);
 
     // ---------- Button deck: extraActions only now ----------
     const buttons = [];

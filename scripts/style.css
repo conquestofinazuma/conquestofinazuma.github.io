@@ -242,13 +242,46 @@ html, body{
   align-items: center;
   justify-content: center;
 }
-.minimap-placeholder{
-  color: rgba(36,26,16,0.4);
-  font-style: italic;
-  font-size: 0.85rem;
-  text-align: center;
-  padding: 20px;
+.minimap-render{
+  width: 100%;
+  height: 100%;
+  padding: 18px;
 }
+
+.mm-edge{
+  stroke: rgba(36,26,16,0.55);
+  stroke-width: 3;
+}
+.mm-edge-locked{
+  stroke: rgba(36,26,16,0.2);
+  stroke-dasharray: 4 4;
+}
+
+.mm-node rect{ stroke-width: 1.5; }
+
+.mm-current rect{
+  fill: var(--gold-bright);
+  stroke: var(--violet-title);
+}
+.mm-visited rect{
+  fill: #241a10;
+  stroke: rgba(201,162,75,0.5);
+}
+.mm-fog rect{
+  fill: rgba(139,107,214,0.22);
+  stroke: rgba(139,107,214,0.55);
+}
+.mm-locked rect{
+  fill: rgba(120,110,95,0.15);
+  stroke: rgba(120,110,95,0.25);
+}
+
+.mm-glyph{
+  font-size: 15px;
+  fill: var(--parchment);
+  pointer-events: none;
+}
+.mm-current .mm-glyph{ fill: #241a10; }
 .minimap-zoom-controls{
   position: absolute;
   top: 8px; right: 8px;

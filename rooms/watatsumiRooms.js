@@ -12,6 +12,7 @@ const watatsumiRooms = {
   watatsumi_market_street: {
     mapId: "watatsumi",
     coord: { x: 0, y: -1 },
+	poi: 'shop',
     text: [
       "Shuttered stalls line a narrow street. Business has not been kind since the Decree.",
       "A few merchants still keep their lamps lit, more out of stubbornness than hope of custom. Faded prayer strips, soaked through, cling to a rope strung between two eaves — offerings to a sea god the capital would rather people forgot."
@@ -42,6 +43,7 @@ const watatsumiRooms = {
   watatsumi_resistance_camp: {
     mapId: "watatsumi",
     coord: { x: -1, y: -2 },
+	poi: 'event',
     text: [
       "Tucked behind a windbreak of black rock, a cluster of tents and cookfires marks a Resistance waypoint.",
       "Watatsumi soldiers move between the tents with the unhurried efficiency of people who have done this a long time. A woman studying a hand-drawn map glances up at you — appraising, not hostile. Not yet."
