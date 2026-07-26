@@ -582,16 +582,6 @@ html, body{
 @keyframes sheen{ to{ background-position: -50% 0; } }
 .action-btn.active:active{ transform: translateY(0px) scale(0.985); }
 
-.version-tag{
-  position:absolute;
-  top:18px; right:18px;
-  font-family:'Cinzel', serif;
-  font-size:0.7rem;
-  letter-spacing:0.1em;
-  color: rgba(201,162,75,0.3);
-  z-index:2;
-}
-
 /* ============ MOBILE ROW-SWAP ARROW ============ */
 .row-arrow{
   display: none;
@@ -696,8 +686,6 @@ html, body{
   .row-arrow.has-content{
     display: flex;
   }
-
-  .version-tag{ font-size: 0.55rem; top: 6px; right: 8px; }
 }
 
 /* ---------- Slightly larger phones / small tablets in portrait ---------- */
