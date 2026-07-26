@@ -582,19 +582,6 @@ html, body{
 @keyframes sheen{ to{ background-position: -50% 0; } }
 .action-btn.active:active{ transform: translateY(0px) scale(0.985); }
 
-.hint-bar{
-  position:absolute;
-  bottom: 22px;
-  left:0; right:0;
-  text-align:center;
-  font-family:'EB Garamond', serif;
-  font-style:italic;
-  font-size:0.85rem;
-  letter-spacing:0.08em;
-  color: rgba(183,157,255,0.4);
-  z-index:2;
-}
-
 .version-tag{
   position:absolute;
   top:18px; right:18px;
@@ -709,8 +696,6 @@ html, body{
   .row-arrow.has-content{
     display: flex;
   }
-
-  .hint-bar{ display: none; }
 
   .version-tag{ font-size: 0.55rem; top: 6px; right: 8px; }
 }
