@@ -161,10 +161,16 @@
         <div class="hour-indicator" id="hour-indicator">hour indicator (time of day)</div>
       </div>
 
-      <div class="compass-box" id="compass-box">
-        <div class="compass-placeholder">compass widget goes here (letting you choose your travel direction)</div>
-      </div>
-
+	<div class="compass-box" id="compass-box">
+	  <div class="compass-dial">
+		<div class="compass-arrow compass-arrow--n" data-dir="north" title="North"><span>▲</span></div>
+		<div class="compass-arrow compass-arrow--w" data-dir="west" title="West"><span>◀</span></div>
+		<div class="compass-rose">☯</div>
+		<div class="compass-arrow compass-arrow--e" data-dir="east" title="East"><span>▶</span></div>
+		<div class="compass-arrow compass-arrow--s" data-dir="south" title="South"><span>▼</span></div>
+	  </div>
+	</div>
+	
       <div class="row-arrow-echo" id="right-row-arrow">
         <span class="arrow-left">←</span>
         <span class="arrow-divider"></span>
@@ -195,6 +201,7 @@
 <script src="scripts/engine.js"></script>
 <script src="scripts/registry.js"></script>
 <script src="scripts/gamestate.js"></script>
+<script src="scripts/compass.js"></script>
 
 <script src="maps/watatsumi.js"></script>
 <script src="rooms/watatsumiRooms.js"></script>

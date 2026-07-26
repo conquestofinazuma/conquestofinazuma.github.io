@@ -39,7 +39,8 @@ const Engine = (() => {
     gameframe().classList.toggle('frame-hidden', !showFrame);
 
     clearButtons();
-
+	Compass.clear();
+	
     const ctx = { show, setButtons, setText };
 
     if(typeof def.onEnter === 'function'){

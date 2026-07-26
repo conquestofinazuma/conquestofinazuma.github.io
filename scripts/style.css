@@ -315,7 +315,7 @@ html, body{
 
 .compass-box{
   margin: 0 14px 14px;
-  min-height: 120px;
+  min-height: 160px;
   background: rgba(0,0,0,0.2);
   border: 1px solid rgba(201,162,75,0.25);
   border-radius: 4px;
@@ -324,11 +324,64 @@ html, body{
   justify-content: center;
   padding: 16px;
 }
-.compass-placeholder{
-  color: rgba(233,200,119,0.4);
-  font-size: 0.85rem;
-  text-align: center;
-  font-style: italic;
+
+.compass-dial{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 6px;
+  width: 100%;
+  max-width: 150px;
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+
+.compass-arrow{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #241914, #150e0b 60%, #0e0906);
+  border: 1px solid rgba(201,162,75,0.28);
+  border-radius: 4px;
+  font-size: 1.1rem;
+  cursor: default;
+  transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+  color: rgba(233,200,119,0.25);
+}
+.compass-arrow--n{ grid-column: 2; grid-row: 1; }
+.compass-arrow--w{ grid-column: 1; grid-row: 2; }
+.compass-arrow--e{ grid-column: 3; grid-row: 2; }
+.compass-arrow--s{ grid-column: 2; grid-row: 3; }
+
+.compass-rose{
+  grid-column: 2; grid-row: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(139,107,214,0.12);
+  border: 1px solid rgba(139,107,214,0.35);
+  color: var(--violet-bright);
+  font-size: 1rem;
+}
+
+.compass-arrow.enabled{
+  color: var(--gold-bright);
+  border-color: rgba(201,162,75,0.5);
+  cursor: pointer;
+  text-shadow: 0 0 10px rgba(233,200,119,0.4);
+}
+.compass-arrow.enabled:hover{
+  transform: translateY(-2px);
+  border-color: var(--violet-bright);
+  box-shadow: 0 0 14px rgba(139,107,214,0.35);
+}
+.compass-arrow.enabled:active{ transform: translateY(0) scale(0.96); }
+
+.compass-arrow.disabled{
+  color: rgba(120,100,70,0.25);
+  border-color: rgba(120,100,70,0.15);
+  cursor: default;
 }
 
 .row-arrow-echo{

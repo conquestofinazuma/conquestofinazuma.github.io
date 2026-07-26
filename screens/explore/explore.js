@@ -5,16 +5,15 @@
 Engine.register('explore', (() => {
 
   const DIRS = [
-    { key: 'north', dx: 0, dy: -1, label: 'North' },
-    { key: 'south', dx: 0, dy: 1,  label: 'South' },
-    { key: 'east',  dx: 1, dy: 0,  label: 'East'  },
-    { key: 'west',  dx: -1, dy: 0, label: 'West'  }
+    { key: 'north', dx: 0, dy: -1 },
+    { key: 'south', dx: 0, dy: 1  },
+    { key: 'east',  dx: 1, dy: 0  },
+    { key: 'west',  dx: -1, dy: 0 }
   ];
 
   function coordKey(x, y) { return `${x},${y}`; }
-
-function getMap(mapId) { return MapRegistry.get(mapId); }
-function getRoom(roomId) { return RoomRegistry.get(roomId); }
+  function getMap(mapId) { return MapRegistry.get(mapId); }
+  function getRoom(roomId) { return RoomRegistry.get(roomId); }
 
   function renderRoom(ctx, mapId, roomId) {
     const map = getMap(mapId);
@@ -28,33 +27,32 @@ function getRoom(roomId) { return RoomRegistry.get(roomId); }
     GameState.setPosition(mapId, roomId);
     ctx.setText(room.text);
 
+    // ---------- Compass ----------
+    // Always renders all 4 directions; a gated or nonexistent exit
+    // shows as disabled/greyed rather than disappearing.
+    const overrideForRoom = map.overrides[coordKey(room.coord.x, room.coord.y)] || {};
+
+    const compassDirs = DIRS.map(dir => {
+      const targetCoord = coordKey(room.coord.x + dir.dx, room.coord.y + dir.dy);
+      const targetRoomId = map.rooms[targetCoord];
+      const override = overrideForRoom[dir.key];
+      const gated = override && override.locked && !GameState.hasFlag(override.requiresFlag);
+
+      return {
+        key: dir.key,
+        enabled: !!targetRoomId && !gated,
+        onSelect: targetRoomId ? () => renderRoom(ctx, mapId, targetRoomId) : null
+      };
+    });
+
+    Compass.render(compassDirs);
+
+    // ---------- Button deck: extraActions only now ----------
     const buttons = [];
     let slot = 1;
 
-    // Reserved-ish ordering: directions first, in a fixed order,
-    // only shown if a room actually exists that way (or an override exists).
-    DIRS.forEach(dir => {
-      const targetCoord = coordKey(room.coord.x + dir.dx, room.coord.y + dir.dy);
-      const targetRoomId = map.rooms[targetCoord];
-      if (!targetRoomId) return; // nothing that direction, skip
-
-      const override = (map.overrides[coordKey(room.coord.x, room.coord.y)] || {})[dir.key];
-      if (override && override.locked && !GameState.hasFlag(override.requiresFlag)) {
-        return; // gated and not yet unlocked — hidden for now (revisit: show as locked?)
-      }
-
-      buttons.push({
-        slot: slot++,
-        label: dir.label,
-        action: () => renderRoom(ctx, mapId, targetRoomId)
-      });
-    });
-
-    // Room-specific extras (shop, swim, inspect, teleport, whatever) get
-    // whatever slots are left. No pagination/overflow handling yet —
-    // that's a real gap once a room wants >10 total actions.
     (room.extraActions || []).forEach(extra => {
-      if (slot > 10) return; // silently drop — needs real handling later
+      if (slot > 10) return; // overflow handling still a known gap
       buttons.push({
         slot: slot++,
         label: extra.label,
