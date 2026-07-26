@@ -1,15 +1,13 @@
-/* ============================================================
-   Conquest of Inazuma — Minimap Widget
-   Renders the CURRENT map's full room grid as an SVG, deriving
-   each room's visual state from GameState + the map's own
-   overrides, rather than storing state redundantly.
-============================================================ */
-
 const Minimap = (() => {
 
   const CELL = 40;
   const GAP = 10;
   const STEP = CELL + GAP;
+
+  const MIN_WINDOW = 3;
+  const MAX_WINDOW = 9;
+  let windowCells = 5;      // was a const, now the current zoom level
+  let lastMapId = null;     // so zoom buttons know what to re-render
 
   function container() { return document.getElementById('minimap-render'); }
 
@@ -18,10 +16,9 @@ const Minimap = (() => {
     return { x, y };
   }
 
-  // Is the edge between two adjacent rooms blocked? Checks the override
-  // on EITHER endpoint pointing at the other — explore.js only ever
-  // checks the source room's override when moving, but for the map
-  // overview we want an edge to read as locked from either side.
+  const px = (x) => x * STEP;
+  const py = (y) => y * STEP;
+
   function edgeLocked(map, keyA, dirAtoB, keyB, dirBtoA) {
     const blockedBy = (o) => o && o.locked && !GameState.hasFlag(o.requiresFlag);
     const oA = (map.overrides[keyA] || {})[dirAtoB];
@@ -37,24 +34,21 @@ const Minimap = (() => {
   }
 
   function render(mapId) {
+    lastMapId = mapId; // remember so zoomIn/zoomOut can re-render without a caller
+
     const map = MapRegistry.get(mapId);
     const el = container();
     if (!map || !el) return;
 
     const currentRoomId = GameState.getPosition().roomId;
     const keys = Object.keys(map.rooms);
-    const coords = keys.map(parseKey);
 
-    const minX = Math.min(...coords.map(c => c.x));
-    const maxX = Math.max(...coords.map(c => c.x));
-    const minY = Math.min(...coords.map(c => c.y));
-    const maxY = Math.max(...coords.map(c => c.y));
+    const currentKey = keys.find(k => map.rooms[k] === currentRoomId);
+    const centerCoord = currentKey ? parseKey(currentKey) : { x: 0, y: 0 };
 
-    const width  = (maxX - minX + 1) * STEP;
-    const height = (maxY - minY + 1) * STEP;
-
-    const px = (x) => (x - minX) * STEP + GAP / 2;
-    const py = (y) => (y - minY) * STEP + GAP / 2;
+    const windowSize = windowCells * STEP; // was WINDOW_CELLS, now the mutable value
+    const viewX = px(centerCoord.x) + CELL / 2 - windowSize / 2;
+    const viewY = py(centerCoord.y) + CELL / 2 - windowSize / 2;
 
     let edgesSvg = '';
     let nodesSvg = '';
@@ -64,8 +58,6 @@ const Minimap = (() => {
       const roomId = map.rooms[key];
       const room = RoomRegistry.get(roomId);
 
-      // Draw edges only "forward" (east/south) to avoid double-drawing —
-      // the neighbor's west/north pass would just redraw the same line.
       const eastKey = `${x + 1},${y}`;
       if (map.rooms[eastKey]) {
         const locked = edgeLocked(map, key, 'east', eastKey, 'west');
@@ -79,7 +71,6 @@ const Minimap = (() => {
         edgesSvg += `<line x1="${x1}" y1="${py(y) + CELL}" x2="${x1}" y2="${py(y + 1)}" class="mm-edge${locked ? ' mm-edge-locked' : ''}"/>`;
       }
 
-      // Determine this room's state.
       let stateClass;
       if (roomId === currentRoomId) {
         stateClass = 'mm-current';
@@ -109,8 +100,30 @@ const Minimap = (() => {
         </g>`;
     });
 
-    el.innerHTML = `<svg viewBox="0 0 ${width} ${height}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">${edgesSvg}${nodesSvg}</svg>`;
+    el.innerHTML = `<svg viewBox="${viewX} ${viewY} ${windowSize} ${windowSize}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">${edgesSvg}${nodesSvg}</svg>`;
   }
 
-  return { render };
+  // Zoom out = SEE MORE rooms = bigger window. Zoom in = fewer rooms, closer view.
+  // Step by 2 (not 1) to keep windowCells odd, so the player's room stays
+  // exactly centered rather than snapping half a cell off-center.
+  function zoomIn() {
+    windowCells = Math.max(MIN_WINDOW, windowCells - 2);
+    if (lastMapId) render(lastMapId);
+  }
+
+  function zoomOut() {
+    windowCells = Math.min(MAX_WINDOW, windowCells + 2);
+    if (lastMapId) render(lastMapId);
+  }
+
+  function bindZoomButtons() {
+    const inBtn = document.getElementById('zoom-in-btn');
+    const outBtn = document.getElementById('zoom-out-btn');
+    if (inBtn) inBtn.addEventListener('click', zoomIn);
+    if (outBtn) outBtn.addEventListener('click', zoomOut);
+  }
+
+  bindZoomButtons();
+
+  return { render, zoomIn, zoomOut };
 })();
